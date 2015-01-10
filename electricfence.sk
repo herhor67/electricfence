@@ -1,0 +1,83 @@
+#hercore electricfence
+#=============================================#
+#   Skrypt napisany przez: herhor67           #
+#   Nazwa: JailBreak                          #
+#=============================================#
+#  Licencja skryptu:                          #
+# * Nie zezwalam na:                          #
+# - Usuwanie treści o autorze!                #
+# - Podszywanie się pod autora!               #
+# - Używanie kodu skryptu w swoich skryptach! #
+# - Zarabianie na skrypcie!                   #
+# - Wrzucanie skryptu do internetu!           #
+# * Zezwalam na:                              #
+# + Dodawanie kodu na swoja potrzebę!         #
+# + Modyfikowanie wiadomości!                 #
+#=============================================#
+options:
+# TAG przed wiadomosciami
+	tag: &7[&cElectricFence&7]
+# co ile zapetla graczy przy plocie, jezepi powyzej 0.5 powoduje, ze mozna podejsc, uciec i uniknac kopniecia przez prad
+	czas: 0.3
+
+variables:
+	{kopniecie.%player%} = false
+
+on skript load:
+	send "{@tag} &2Zaladowano pomyslnie" to console
+	register new shapeless recipe for fence named "&cElektryczny plot" using fence, redstone, none, none, none, none, none, none, none
+
+on skript unload:
+	send "{@tag} &2Wylaczono pomyslnie" to console
+
+#--------------------------------------#
+#  dodawanie plotkow do elektrcznych   #
+#--------------------------------------#
+on place of fence:
+	name of player's tool is "&cElektryczny plot":
+		player can build at targeted block:
+			set {wlasciciel.%location of block%} to player
+#--------------------------------------#
+#    porazenie przy dotknieciu reka    #
+#--------------------------------------#
+
+on break of fence:
+	{wlasciciel.%location of block%} is set:
+		{wlasciciel.%location of block%} is player:
+			clear {wlasciciel.%location ofs block%}
+		else:
+			cancel event
+
+#--------------------------------------#
+#    porazenie przy styku z plotem     #
+#--------------------------------------#
+every {@czas} second:
+	loop all players:
+		{kopniecie.%loop-player%} is false
+		loop blocks in radius 1 of loop-player:
+			loop-block is fence:
+				{wlasciciel.%location of loop-block%} is set:
+					{wlasciciel.%location of loop-block%} isn't loop-player:
+						strike lightning effect at loop-player
+						send "{@tag} &6Porazil cie prad!" to loop-player
+						damage loop-player by 2.5 hearts
+						remove 	Nausea from loop-player
+						remove Blindness from loop-player
+						apply Nausea to loop-player for 7 seconds
+						apply Blindness to loop-player for 5 seconds
+						set {kopniecie.%loop-player%} to true
+						wait 3 seconds
+						set {kopniecie.%loop-player%} to false
+			loop-block is fence gate:
+				{wlasciciel.%location of loop-block%} is set:
+					{wlasciciel.%location of loop-block%} isn't loop-player:
+						strike lightning effect at loop-player
+						send "{@tag} &6Porazil cie prad!" to loop-player
+						damage loop-player by 2.5 hearts
+						remove 	Nausea from loop-player
+						remove Blindness from loop-player
+						apply Nausea to loop-player for 7 seconds
+						apply Blindness to loop-player for 5 seconds
+						set {kopniecie.%loop-player%} to true
+						wait 3 seconds
+						set {kopniecie.%loop-player%} to false
