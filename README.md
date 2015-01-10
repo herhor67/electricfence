@@ -1,2 +1,2 @@
-# electricfence
+# ElectricFence
 Płoty pod napięciem!
